@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SWILL · Нейросеть + Генератор по году</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <title>SWILL · ИИ-исполнитель</title>
+    <!-- Подключаем Transformers.js для работы нейросети в браузере -->
+    <script type="importmap">
+        {
+            "imports": {
+                "@xenova/transformers": "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0/dist/transformers.min.js"
+            }
+        }
+    </script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(145deg, #0b0e1a, #1a1f2e);
-            color: #fff;
+            background: #0b0e1a;
+            color: #e0e0e0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -18,51 +25,48 @@
             padding: 20px;
         }
         .card {
-            background: rgba(255,255,255,0.04);
-            backdrop-filter: blur(16px);
-            border-radius: 48px;
-            padding: 40px 30px;
-            max-width: 720px;
+            background: rgba(20, 25, 45, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            padding: 40px 35px;
+            max-width: 820px;
             width: 100%;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid #2a2f4a;
             box-shadow: 0 30px 80px rgba(0,0,0,0.9);
-            text-align: center;
         }
         h1 {
-            font-size: 2.6rem;
+            font-size: 2.4rem;
             font-weight: 300;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #f0e68c, #ffd700);
+            background: linear-gradient(135deg, #b388ff, #82b1ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
         }
-        .year-badge {
-            font-size: 4.2rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, #f7971e, #ffd200);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-            margin: 6px 0 14px;
+        .sub {
+            opacity: 0.6;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
         }
-        canvas {
-            background: #ffffff;
-            border-radius: 28px;
-            cursor: crosshair;
+        textarea {
             width: 100%;
-            max-width: 300px;
-            height: auto;
-            aspect-ratio: 1/1;
-            border: 2px solid #3a3f5a;
-            touch-action: none;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            min-height: 110px;
+            background: #141a2b;
+            border: 1px solid #2f3650;
+            border-radius: 20px;
+            padding: 16px 18px;
+            color: #fff;
+            font-size: 1rem;
+            resize: vertical;
+            font-family: inherit;
+            outline: none;
+            transition: 0.2s;
         }
+        textarea:focus { border-color: #7c8cff; box-shadow: 0 0 0 3px rgba(124, 140, 255, 0.2); }
         .btn-group {
             display: flex;
             gap: 12px;
-            justify-content: center;
             flex-wrap: wrap;
-            margin: 22px 0 14px;
+            margin: 18px 0 14px;
         }
         button {
             padding: 12px 28px;
@@ -73,167 +77,308 @@
             background: #2c3250;
             color: #fff;
             cursor: pointer;
-            transition: 0.2s ease;
+            transition: 0.2s;
             box-shadow: 0 4px 14px rgba(0,0,0,0.5);
-            letter-spacing: 0.3px;
+            flex: 1 0 auto;
+            min-width: 140px;
         }
-        button:hover {
-            transform: scale(1.04);
-            background: #40476b;
-        }
-        #result {
-            font-size: 1.8rem;
-            font-weight: 500;
-            padding: 16px 20px;
-            background: rgba(0,0,0,0.35);
-            border-radius: 60px;
-            margin-top: 10px;
-            min-height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        button:hover { transform: scale(1.03); background: #3f4670; }
+        button.primary { background: #5c6bc0; }
+        button.primary:hover { background: #7c8cff; }
+        #output {
+            margin-top: 22px;
+            background: #0f1422;
+            border-radius: 20px;
+            padding: 18px 20px;
+            min-height: 120px;
+            white-space: pre-wrap;
             word-break: break-word;
+            border: 1px solid #282f48;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
         }
-        .footer {
-            margin-top: 28px;
-            opacity: 0.5;
-            font-size: 0.85rem;
-            border-top: 1px solid #2a2f42;
-            padding-top: 20px;
-            letter-spacing: 0.5px;
+        #status {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .badge-gh {
-            display: inline-block;
-            background: #1f2336;
-            padding: 4px 16px;
+        .file-badge {
+            background: #1f2540;
+            padding: 4px 14px;
             border-radius: 40px;
             font-size: 0.75rem;
-            margin-top: 8px;
-            color: #aaa;
+            color: #aab;
         }
+        a.download-link {
+            color: #82b1ff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+        a.download-link:hover { text-decoration: underline; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 <div class="card">
-    <h1>🧠 SWILL</h1>
-    <div class="year-badge" id="yearDisplay">2026</div>
-    <p style="opacity:0.6; margin-bottom: 12px;">нарисуй цифру → нейросеть распознает</p>
+    <h1>🧠 SWILL · ИИ-ИСПОЛНИТЕЛЬ</h1>
+    <div class="sub">Напиши, что нужно сделать — нейросеть сгенерирует код, создаст файлы и скачает их</div>
 
-    <canvas id="canvas" width="280" height="280"></canvas>
+    <textarea id="commandInput" placeholder="Пример: «Создай лендинг для портфолио с тёмной темой и формой контакта» или «Напиши Python-скрипт, который считает факториал»"></textarea>
 
     <div class="btn-group">
-        <button id="predictBtn">🔮 Распознать</button>
+        <button class="primary" id="executeBtn">⚡ Выполнить</button>
         <button id="clearBtn">🧹 Очистить</button>
-        <button id="autoGenBtn">⚡ Генерация по году</button>
+        <button id="downloadBtn">📥 Скачать всё</button>
     </div>
 
-    <div id="result">?</div>
-
-    <div class="footer">
-        © <span id="yearFooter">2026</span> · SWILL · работа на GitHub Pages
-        <div class="badge-gh">📁 deploy ready</div>
+    <div id="output">➜ Ожидаю команду...</div>
+    <div id="status">
+        <span id="modelStatus">🔴 Модель не загружена</span>
+        <span class="file-badge" id="fileCounter">📄 файлов: 0</span>
+        <span id="downloadLinkContainer"></span>
     </div>
 </div>
 
-<script>
-    // ===== ГОД =====
-    const currentYear = new Date().getFullYear();
-    document.getElementById('yearDisplay').textContent = currentYear;
-    document.getElementById('yearFooter').textContent = currentYear;
+<script type="module">
+    // =====================================================
+    // 1. ИМПОРТ НЕЙРОСЕТИ (Transformers.js)
+    // =====================================================
+    import { pipeline } from '@xenova/transformers';
 
-    // ===== НЕЙРОСЕТЬ =====
-    let model;
+    // =====================================================
+    // 2. СОСТОЯНИЕ
+    // =====================================================
+    let generator = null;
+    let generatedFiles = []; // массив { name, content }
+    let lastRawOutput = '';
 
-    async function buildModel() {
-        const xs = tf.randomNormal([140, 784]);
-        const ys = tf.randomUniform([140, 10]);
-        const m = tf.sequential();
-        m.add(tf.layers.dense({ units: 128, activation: 'relu', inputShape: [784] }));
-        m.add(tf.layers.dense({ units: 10, activation: 'softmax' }));
-        m.compile({ optimizer: 'adam', loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
-        await m.fit(xs, ys, { epochs: 6, shuffle: true });
-        return m;
+    const commandInput = document.getElementById('commandInput');
+    const outputDiv = document.getElementById('output');
+    const statusSpan = document.getElementById('modelStatus');
+    const fileCounter = document.getElementById('fileCounter');
+    const downloadLinkContainer = document.getElementById('downloadLinkContainer');
+
+    // =====================================================
+    // 3. ЗАГРУЗКА НЕЙРОСЕТИ (text-generation)
+    // =====================================================
+    async function loadModel() {
+        statusSpan.textContent = '⏳ Загрузка нейросети (может занять 10–20 сек)...';
+        try {
+            generator = await pipeline('text-generation', 'Xenova/gpt2'); // лёгкая модель для браузера
+            statusSpan.textContent = '✅ Нейросеть готова';
+            outputDiv.textContent = '➜ Нейросеть загружена. Введи команду.';
+        } catch (e) {
+            statusSpan.textContent = '❌ Ошибка загрузки модели';
+            console.error(e);
+            outputDiv.textContent = '❌ Не удалось загрузить нейросеть. Проверь интернет и перезагрузи страницу.';
+        }
     }
 
-    buildModel().then(m => {
-        model = m;
-        document.getElementById('result').innerHTML = '✅ модель готова';
-    });
+    loadModel();
 
-    // ===== CANVAS =====
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
+    // =====================================================
+    // 4. ГЕНЕРАЦИЯ КОДА ПО КОМАНДЕ
+    // =====================================================
+    async function generateCode(prompt) {
+        if (!generator) {
+            throw new Error('Нейросеть ещё не загружена');
+        }
 
-    function draw(e) {
-        if (!drawing) return;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-        const cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-        const x = Math.min(Math.max(cx * scaleX, 0), 280);
-        const y = Math.min(Math.max(cy * scaleY, 0), 280);
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        ctx.arc(x, y, 14, 0, 2 * Math.PI);
-        ctx.fill();
+        // Формируем промпт для генерации КОДА (а не текста)
+        const fullPrompt = `Ты — ИИ-помощник. Сгенерируй ПОЛНЫЙ РАБОЧИЙ КОД (HTML, CSS, JS, Python или другой) по запросу: "${prompt}". 
+Выдай только код, без пояснений. Если это веб-страница — выдай полный HTML с встроенными стилями и скриптами. 
+Если это скрипт — выдай чистый код.`;
+
+        const result = await generator(fullPrompt, {
+            max_new_tokens: 800,
+            temperature: 0.7,
+            do_sample: true,
+        });
+
+        return result[0].generated_text;
     }
 
-    canvas.addEventListener('mousedown', () => drawing = true);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', () => drawing = false);
-    canvas.addEventListener('mouseleave', () => drawing = false);
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); drawing = true; });
-    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
-    canvas.addEventListener('touchend', () => drawing = false);
+    // =====================================================
+    // 5. ПАРСИНГ И СОЗДАНИЕ ФАЙЛОВ
+    // =====================================================
+    function parseAndCreateFiles(rawText) {
+        const files = [];
+
+        // Пытаемся извлечь HTML
+        const htmlMatch = rawText.match(/<!DOCTYPE html>[\s\S]*?<\/html>/i);
+        if (htmlMatch) {
+            files.push({ name: 'index.html', content: htmlMatch[0] });
+        }
+
+        // Пытаемся извлечь CSS (если отдельно)
+        const cssMatch = rawText.match(/<style>([\s\S]*?)<\/style>/i);
+        if (cssMatch && !htmlMatch) {
+            files.push({ name: 'style.css', content: cssMatch[1] });
+        }
+
+        // Пытаемся извлечь JS
+        const jsMatch = rawText.match(/<script>([\s\S]*?)<\/script>/i);
+        if (jsMatch && !htmlMatch) {
+            files.push({ name: 'script.js', content: jsMatch[1] });
+        }
+
+        // Если есть Python-код (блок с def или import)
+        const pyMatch = rawText.match(/(def\s+\w+|import\s+\w+)[\s\S]{20,}/);
+        if (pyMatch && !htmlMatch) {
+            files.push({ name: 'script.py', content: pyMatch[0] });
+        }
+
+        // Если ничего не найдено — создаём .txt с ответом
+        if (files.length === 0) {
+            files.push({ name: 'response.txt', content: rawText });
+        }
+
+        return files;
+    }
+
+    // =====================================================
+    // 6. ОСНОВНАЯ ФУНКЦИЯ ВЫПОЛНЕНИЯ
+    // =====================================================
+    async function executeCommand() {
+        const command = commandInput.value.trim();
+        if (!command) {
+            outputDiv.textContent = '⚠️ Введи команду.';
+            return;
+        }
+
+        outputDiv.textContent = '⏳ Генерация... Нейросеть думает...';
+        generatedFiles = [];
+
+        try {
+            // Генерируем код
+            const raw = await generateCode(command);
+            lastRawOutput = raw;
+
+            // Парсим файлы
+            generatedFiles = parseAndCreateFiles(raw);
+
+            // Отображаем результат
+            let displayText = `✅ Создано файлов: ${generatedFiles.length}\n\n`;
+            generatedFiles.forEach((f, i) => {
+                displayText += `📄 ${f.name} (${f.content.length} символов)\n`;
+                displayText += `--- начало ${f.name} ---\n${f.content.substring(0, 600)}${f.content.length > 600 ? '…\n' : '\n'}`;
+                displayText += `--- конец ${f.name} ---\n\n`;
+            });
+
+            if (generatedFiles.length === 0) {
+                displayText = `⚠️ Не удалось извлечь файлы. Сырой ответ:\n${raw.substring(0, 1000)}`;
+            }
+
+            outputDiv.textContent = displayText;
+            fileCounter.textContent = `📄 файлов: ${generatedFiles.length}`;
+
+            // Обновляем ссылку на скачивание
+            updateDownloadLink();
+
+        } catch (e) {
+            outputDiv.textContent = `❌ Ошибка: ${e.message}`;
+            console.error(e);
+        }
+    }
+
+    // =====================================================
+    // 7. СКАЧИВАНИЕ ВСЕХ ФАЙЛОВ (ZIP или по одному)
+    // =====================================================
+    function updateDownloadLink() {
+        downloadLinkContainer.innerHTML = '';
+        if (generatedFiles.length === 0) return;
+
+        // Если только один файл — даём прямую ссылку
+        if (generatedFiles.length === 1) {
+            const f = generatedFiles[0];
+            const blob = new Blob([f.content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = f.name;
+            a.textContent = `⬇ Скачать ${f.name}`;
+            a.className = 'download-link';
+            downloadLinkContainer.appendChild(a);
+            return;
+        }
+
+        // Несколько файлов — создаём ZIP через JSZip (подключаем динамически)
+        import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js')
+            .then(module => {
+                const JSZip = module.default;
+                const zip = new JSZip();
+                generatedFiles.forEach(f => {
+                    zip.file(f.name, f.content);
+                });
+                zip.generateAsync({ type: 'blob' }).then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'swill_generated_files.zip';
+                    a.textContent = '⬇ Скачать все файлы (ZIP)';
+                    a.className = 'download-link';
+                    downloadLinkContainer.innerHTML = '';
+                    downloadLinkContainer.appendChild(a);
+                });
+            })
+            .catch(() => {
+                // fallback — по одному
+                downloadLinkContainer.innerHTML = '';
+                generatedFiles.forEach(f => {
+                    const blob = new Blob([f.content], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = f.name;
+                    a.textContent = `⬇ ${f.name}`;
+                    a.className = 'download-link';
+                    a.style.marginRight = '10px';
+                    downloadLinkContainer.appendChild(a);
+                });
+            });
+    }
+
+    // =====================================================
+    // 8. ОБРАБОТЧИКИ КНОПОК
+    // =====================================================
+    document.getElementById('executeBtn').addEventListener('click', executeCommand);
 
     document.getElementById('clearBtn').addEventListener('click', () => {
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, 280, 280);
-        document.getElementById('result').innerHTML = '?';
-    });
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, 280, 280);
-
-    // ===== РАСПОЗНАВАНИЕ =====
-    document.getElementById('predictBtn').addEventListener('click', async () => {
-        if (!model) { document.getElementById('result').innerHTML = '⏳ загрузка...'; return; }
-        const img = ctx.getImageData(0, 0, 280, 280);
-        const pixels = [];
-        for (let i = 0; i < img.data.length; i += 4) pixels.push(img.data[i] / 255);
-        const tensor = tf.tensor([pixels]);
-        const pred = model.predict(tensor);
-        const digit = pred.argMax(-1).dataSync()[0];
-        document.getElementById('result').innerHTML = `🎯 распознано: <strong>${digit}</strong>`;
+        commandInput.value = '';
+        outputDiv.textContent = '➜ Очищено. Введи новую команду.';
+        generatedFiles = [];
+        fileCounter.textContent = '📄 файлов: 0';
+        downloadLinkContainer.innerHTML = '';
     });
 
-    // ===== ГЕНЕРАЦИЯ ПО ГОДУ =====
-    document.getElementById('autoGenBtn').addEventListener('click', () => {
-        const year = currentYear;
-        const dict = {
-            2024: '🚀 год ИИ-агентов',
-            2025: '🧬 год квантовых сетей',
-            2026: '🌌 год мультимодальных моделей',
-            2027: '🤖 год автономных систем',
-            2028: '💎 год AGI-прототипов'
-        };
-        const text = dict[year] || `✨ год ${year} — генеративный код`;
-
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, 280, 280);
-        ctx.fillStyle = '#000';
-        ctx.font = 'bold 18px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(text, 140, 140);
-
-        document.getElementById('result').innerHTML = `📅 ${text}`;
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+        if (generatedFiles.length === 0) {
+            alert('Нет файлов для скачивания. Сначала выполни команду.');
+            return;
+        }
+        // Просто вызываем обновление ссылки и кликаем по первой
+        updateDownloadLink();
+        const link = downloadLinkContainer.querySelector('a');
+        if (link) link.click();
     });
 
-    // авто-генерация при загрузке
+    // =====================================================
+    // 9. АВТО-ЗАПУСК ПОКАЗАТЕЛЬНОЙ КОМАНДЫ
+    // =====================================================
     window.addEventListener('load', () => {
-        setTimeout(() => document.getElementById('autoGenBtn').click(), 500);
+        setTimeout(() => {
+            if (!commandInput.value) {
+                commandInput.value = 'Создай простую страницу с заголовком "Привет, SWILL!" и кнопкой, которая показывает дату.';
+                // Не выполняем автоматически, чтобы пользователь сам запустил
+            }
+        }, 1500);
     });
 </script>
 </body>
