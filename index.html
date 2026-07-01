@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SWILL · Генератор сайтов</title>
     <script type="importmap">
         {
@@ -12,12 +12,7 @@
         }
     </script>
     <style>
-        /* ===== RESET & BASE ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: #0d1117;
@@ -26,205 +21,162 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            padding: 0;
+            margin: 0;
         }
-
-        /* ===== HEADER ===== */
+        /* ШАПКА */
         .header {
             background: #161b22;
-            padding: 12px 28px;
+            padding: 10px 16px;
             border-bottom: 1px solid #30363d;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
             flex-shrink: 0;
         }
         .header .logo {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             background: linear-gradient(135deg, #58a6ff, #f0883e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .header .status {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             opacity: 0.7;
             margin-left: auto;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .status-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: #3fb950;
             animation: pulse 1.5s infinite;
         }
-        @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
-        }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
-        /* ===== MAIN LAYOUT ===== */
+        /* ОСНОВНОЙ БЛОК */
         .main {
             display: flex;
             flex: 1;
             overflow: hidden;
+            flex-direction: column;
+        }
+        @media (min-width: 700px) {
+            .main { flex-direction: row; }
         }
 
-        /* ===== CHAT (левая панель) ===== */
+        /* ЧАТ */
         .chat {
             flex: 1;
             display: flex;
             flex-direction: column;
             min-width: 0;
-            background: #0d1117;
         }
         .messages {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 24px;
+            padding: 12px 16px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
         .message {
             display: flex;
-            gap: 12px;
-            max-width: 88%;
-            animation: fadeIn 0.25s ease;
+            gap: 10px;
+            max-width: 92%;
+            animation: fadeIn 0.2s ease;
         }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(6px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .message.user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
         .message .avatar {
-            width: 34px;
-            height: 34px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
-        .message.user .avatar {
-            background: #238636;
-            color: #fff;
-        }
-        .message.assistant .avatar {
-            background: #1f2937;
-            color: #f0883e;
-            border: 1px solid #30363d;
-        }
+        .message.user .avatar { background: #238636; color: #fff; }
+        .message.assistant .avatar { background: #1f2937; color: #f0883e; border: 1px solid #30363d; }
         .message .bubble {
             background: #161b22;
-            padding: 12px 16px;
-            border-radius: 16px;
+            padding: 10px 14px;
+            border-radius: 14px;
             border: 1px solid #30363d;
-            line-height: 1.6;
+            line-height: 1.5;
             word-break: break-word;
-            overflow-x: auto;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
-        .message.user .bubble {
-            background: #238636;
-            border-color: #238636;
-        }
+        .message.user .bubble { background: #238636; border-color: #238636; }
         .message .bubble pre {
             background: #0d1117;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 8px;
+            border-radius: 6px;
             overflow-x: auto;
-            margin: 6px 0;
-            border: 1px solid #30363d;
-            font-size: 0.82rem;
+            margin: 4px 0;
+            font-size: 0.75rem;
         }
-        .message .bubble code {
-            font-family: 'Courier New', monospace;
-            background: #0d1117;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-        .message .bubble a {
-            color: #58a6ff;
-            text-decoration: none;
-        }
-        .message .bubble a:hover {
-            text-decoration: underline;
-        }
+        .message .bubble code { font-family: monospace; background: #0d1117; padding: 2px 5px; border-radius: 4px; }
 
-        /* ===== INPUT ===== */
+        /* ПОЛЕ ВВОДА */
         .input-area {
-            padding: 14px 24px 18px;
+            padding: 10px 16px 14px;
             background: #0d1117;
             border-top: 1px solid #30363d;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
         .input-area textarea {
             flex: 1;
             background: #161b22;
             border: 1px solid #30363d;
-            border-radius: 20px;
-            padding: 10px 16px;
+            border-radius: 18px;
+            padding: 8px 14px;
             color: #e6edf3;
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             resize: none;
             outline: none;
-            transition: 0.2s;
-            min-height: 44px;
-            max-height: 160px;
+            min-height: 40px;
+            max-height: 120px;
         }
-        .input-area textarea:focus {
-            border-color: #58a6ff;
-            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
-        }
+        .input-area textarea:focus { border-color: #58a6ff; }
         .input-area button {
-            padding: 0 24px;
+            padding: 0 18px;
             border: none;
-            border-radius: 20px;
+            border-radius: 18px;
             background: #238636;
             color: #fff;
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
         }
-        .input-area button:hover {
-            background: #2ea043;
-            transform: scale(1.02);
-        }
-        .input-area button:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .input-area button:disabled { opacity: 0.4; }
 
-        /* ===== RIGHT PANEL (预览 + 文件) ===== */
+        /* ПАНЕЛЬ ПРЕВЬЮ */
         .preview-panel {
-            width: 45%;
-            min-width: 380px;
             background: #161b22;
-            border-left: 1px solid #30363d;
+            border-top: 1px solid #30363d;
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
+            height: 40vh;
+        }
+        @media (min-width: 700px) {
+            .preview-panel {
+                width: 50%;
+                height: 100%;
+                border-top: none;
+                border-left: 1px solid #30363d;
+            }
         }
         .preview-panel .tabs {
             display: flex;
@@ -234,22 +186,18 @@
         }
         .preview-panel .tabs button {
             flex: 1;
-            padding: 10px 0;
+            padding: 8px 0;
             background: transparent;
             border: none;
             color: #8b949e;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
             border-bottom: 2px solid transparent;
         }
         .preview-panel .tabs button.active {
             color: #e6edf3;
             border-bottom-color: #58a6ff;
-        }
-        .preview-panel .tabs button:hover {
-            color: #e6edf3;
         }
         .preview-container {
             flex: 1;
@@ -268,116 +216,77 @@
             justify-content: center;
             height: 100%;
             color: #8b949e;
-            font-size: 1rem;
+            font-size: 0.9rem;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
-        .preview-container .placeholder .icon {
-            font-size: 3rem;
-        }
-
-        /* ===== FILE LIST (внутри правой панели) ===== */
         .file-bar {
-            padding: 12px 18px;
+            padding: 8px 14px;
             background: #0d1117;
             border-top: 1px solid #30363d;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
             flex-shrink: 0;
-            min-height: 54px;
+            min-height: 44px;
         }
         .file-bar .file-tag {
             background: #21262d;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 16px;
+            font-size: 0.7rem;
             display: flex;
             align-items: center;
             gap: 6px;
-            border: 1px solid #30363d;
         }
-        .file-bar .file-tag a {
-            color: #58a6ff;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .file-bar .file-tag a:hover {
-            text-decoration: underline;
-        }
+        .file-bar .file-tag a { color: #58a6ff; text-decoration: none; }
         .file-bar .download-all {
             margin-left: auto;
             background: #238636;
             border: none;
             color: #fff;
-            padding: 4px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 4px 14px;
+            border-radius: 16px;
+            font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .file-bar .download-all:hover {
-            background: #2ea043;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 860px) {
-            .preview-panel {
-                width: 100%;
-                min-width: unset;
-                border-left: none;
-                border-top: 1px solid #30363d;
-                max-height: 45vh;
-            }
-            .main {
-                flex-direction: column;
-            }
-            .message {
-                max-width: 95%;
-            }
         }
     </style>
 </head>
 <body>
-
-    <!-- ===== HEADER ===== -->
+    <!-- ШАПКА -->
     <div class="header">
         <div class="logo">SWILL</div>
         <div style="opacity:0.4;">·</div>
-        <div style="font-size:0.9rem; opacity:0.8;">Генератор сайтов</div>
+        <div style="font-size:0.8rem; opacity:0.8;">Генератор сайтов</div>
         <div class="status">
             <span class="status-dot"></span>
             <span id="modelStatus">Загрузка...</span>
         </div>
     </div>
 
-    <!-- ===== MAIN ===== -->
+    <!-- ОСНОВНАЯ ОБЛАСТЬ -->
     <div class="main">
-        <!-- ЛЕВАЯ ПАНЕЛЬ: ЧАТ -->
+        <!-- ЧАТ -->
         <div class="chat">
             <div class="messages" id="messages">
                 <div class="message assistant">
                     <div class="avatar">🤖</div>
                     <div class="bubble">
-                        <strong>Привет! Я SWILL — генератор сайтов.</strong><br><br>
-                        📝 <strong>Напиши описание</strong> любого сайта:<br>
-                        • <em>«Сделай лендинг для кофейни с формой заказа»</em><br>
-                        • <em>«Сайт-портфолио с тёмной темой»</em><br>
-                        • <em>«Страницу с калькулятором и анимацией»</em><br><br>
-                        Сразу покажу <strong>предпросмотр</strong> и дам скачать готовый HTML.
+                        <strong>Привет! Я SWILL.</strong><br>
+                        Напиши, какой сайт нужно создать.<br>
+                        <em>Пример: «Сделай лендинг для кофейни»</em>
                     </div>
                 </div>
             </div>
-
             <div class="input-area">
-                <textarea id="userInput" rows="1" placeholder="Опиши сайт, который нужно создать..."></textarea>
+                <textarea id="userInput" rows="1" placeholder="Опиши сайт..."></textarea>
                 <button id="sendBtn">➤</button>
             </div>
         </div>
 
-        <!-- ПРАВАЯ ПАНЕЛЬ: PREVIEW + ФАЙЛЫ -->
+        <!-- ПАНЕЛЬ ПРЕВЬЮ -->
         <div class="preview-panel">
             <div class="tabs">
                 <button class="active" data-tab="preview">👁️ Предпросмотр</button>
@@ -385,24 +294,23 @@
             </div>
             <div class="preview-container" id="previewContainer">
                 <div class="placeholder" id="placeholder">
-                    <div class="icon">🌐</div>
-                    <div>Здесь будет предпросмотр сайта</div>
-                    <div style="font-size:0.8rem; opacity:0.5;">Напиши описание в чате</div>
+                    <div style="font-size:2rem;">🌐</div>
+                    <div>Здесь будет ваш сайт</div>
                 </div>
                 <iframe id="previewIframe" style="display:none; width:100%; height:100%; border:none;"></iframe>
-                <pre id="codeView" style="display:none; padding:16px; margin:0; overflow:auto; height:100%; background:#0d1117; font-size:0.8rem; white-space:pre-wrap; word-wrap:break-word; color:#e6edf3;"></pre>
+                <pre id="codeView" style="display:none; padding:12px; margin:0; overflow:auto; height:100%; background:#0d1117; font-size:0.75rem; white-space:pre-wrap; word-wrap:break-word; color:#e6edf3;"></pre>
             </div>
             <div class="file-bar" id="fileBar">
-                <span style="opacity:0.5; font-size:0.8rem;">📁 Файлы:</span>
-                <span id="fileTags" style="opacity:0.4; font-size:0.8rem;">нет</span>
-                <button class="download-all" id="downloadAllBtn" style="display:none;">⬇ Скачать ZIP</button>
+                <span style="opacity:0.5; font-size:0.75rem;">📁 Файлы:</span>
+                <span id="fileTags" style="opacity:0.4; font-size:0.75rem;">нет</span>
+                <button class="download-all" id="downloadAllBtn" style="display:none;">⬇ ZIP</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         // ============================================================
-        // 1. ИМПОРТЫ
+        // 1. ИМПОРТ НЕЙРОСЕТИ
         // ============================================================
         import { pipeline } from '@xenova/transformers';
 
@@ -412,7 +320,7 @@
         let generator = null;
         let isProcessing = false;
         let currentHtml = '';
-        let currentFiles = []; // { name, content }
+        let currentFiles = [];
 
         const messagesDiv = document.getElementById('messages');
         const userInput = document.getElementById('userInput');
@@ -424,31 +332,33 @@
         const codeView = document.getElementById('codeView');
         const fileTags = document.getElementById('fileTags');
         const downloadAllBtn = document.getElementById('downloadAllBtn');
-
         const tabButtons = document.querySelectorAll('.tabs button');
 
         // ============================================================
-        // 3. ЗАГРУЗКА МОДЕЛИ
+        // 3. ЗАГРУЗКА МОДЕЛИ (с обработкой ошибок)
         // ============================================================
         async function loadModel() {
             modelStatus.textContent = 'Загрузка GPT-2...';
             try {
                 generator = await pipeline('text-generation', 'Xenova/gpt2');
                 modelStatus.textContent = 'Готова ✅';
+                addMessage('assistant', '✅ Нейросеть загружена! Можете создавать сайты.');
             } catch (e) {
                 modelStatus.textContent = 'Ошибка ❌';
                 console.error(e);
-                addMessage('assistant', '⚠️ Не удалось загрузить нейросеть. Проверь интернет.');
+                addMessage('assistant', '⚠️ Не удалось загрузить нейросеть. Но вы всё равно можете использовать генератор на основе шаблонов (без ИИ).');
+                // Включаем fallback-генератор
+                generator = null;
             }
         }
         loadModel();
 
         // ============================================================
-        // 4. ОТПРАВКА СООБЩЕНИЙ
+        // 4. ОТПРАВКА СООБЩЕНИЙ (работает всегда)
         // ============================================================
         async function sendMessage() {
             const text = userInput.value.trim();
-            if (!text || isProcessing || !generator) return;
+            if (!text || isProcessing) return;
 
             isProcessing = true;
             sendBtn.disabled = true;
@@ -460,58 +370,39 @@
             const thinkingMsg = addMessage('assistant', '⏳ Генерирую сайт...');
 
             try {
-                const prompt = `Ты — генератор сайтов. Создай ПОЛНЫЙ HTML-документ с CSS (внутри <style>) и JavaScript (внутри <script>), если нужно. 
-                Запрос: ${text}
-                Выдай ТОЛЬКО код, начиная с <!DOCTYPE html> и заканчивая </html>.`;
+                let html = '';
 
-                const result = await generator(prompt, {
-                    max_new_tokens: 900,
-                    temperature: 0.7,
-                    do_sample: true,
-                });
-
-                let raw = result[0].generated_text;
-                // Обрезаем до HTML
-                const htmlStart = raw.indexOf('<!DOCTYPE html>');
-                if (htmlStart !== -1) {
-                    raw = raw.slice(htmlStart);
-                }
-                const htmlEnd = raw.indexOf('</html>');
-                if (htmlEnd !== -1) {
-                    raw = raw.slice(0, htmlEnd + 7);
-                }
-
-                // Если не нашли HTML — пробуем найти любой код в ```
-                if (!raw.includes('<!DOCTYPE html>')) {
-                    const codeMatch = raw.match(/```html?\n([\s\S]*?)```/i);
-                    if (codeMatch) {
-                        raw = codeMatch[1].trim();
-                    }
+                // Если нейросеть загружена — используем её
+                if (generator) {
+                    const prompt = `Создай полный HTML-документ с CSS (внутри <style>) и JS (внутри <script>) для: ${text}. Выдай только код от <!DOCTYPE html> до </html>.`;
+                    const result = await generator(prompt, {
+                        max_new_tokens: 800,
+                        temperature: 0.7,
+                        do_sample: true,
+                    });
+                    let raw = result[0].generated_text;
+                    const start = raw.indexOf('<!DOCTYPE html>');
+                    if (start !== -1) raw = raw.slice(start);
+                    const end = raw.indexOf('</html>');
+                    if (end !== -1) raw = raw.slice(0, end + 7);
+                    html = raw || generateFallbackSite(text);
+                } else {
+                    // Fallback — генератор на основе ключевых слов
+                    html = generateFallbackSite(text);
                 }
 
-                // Если всё ещё пусто — используем шаблон
-                if (!raw || raw.length < 50) {
-                    raw = `<!DOCTYPE html>
-        <html lang="ru">
-        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Сайт</title>
-        <style>body{font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#0d1117;color:#e6edf3;margin:0;}h1{font-size:3rem;background:linear-gradient(135deg,#58a6ff,#f0883e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}</style>
-        </head>
-        <body><h1>🌐 SWILL</h1></body>
-        </html>`;
+                // Если всё равно пусто — подставляем заглушку
+                if (!html || html.length < 50) {
+                    html = `<!DOCTYPE html><html><head><title>Сайт</title></head><body><h1>🌐 Ваш сайт</h1><p>Описание: ${text}</p></body></html>`;
                 }
 
-                // Сохраняем
-                currentHtml = raw;
-                currentFiles = [{ name: 'index.html', content: raw }];
+                currentHtml = html;
+                currentFiles = [{ name: 'index.html', content: html }];
 
-                // Удаляем "думаю"
                 thinkingMsg.remove();
+                addMessage('assistant', `✅ Сайт готов! Смотрите предпросмотр справа.`);
 
-                // Показываем в чате ссылку
-                addMessage('assistant', `✅ Сайт готов! Смотри предпросмотр справа 👉\n\n📄 [index.html](${URL.createObjectURL(new Blob([raw], {type:'text/html'}))})`);
-
-                // Обновляем превью
-                showPreview(raw);
+                showPreview(html);
                 updateFileBar();
 
             } catch (e) {
@@ -526,36 +417,60 @@
         }
 
         // ============================================================
-        // 5. ПРЕДПРОСМОТР
+        // 5. FALLBACK-ГЕНЕРАТОР (без нейросети)
+        // ============================================================
+        function generateFallbackSite(description) {
+            const lower = description.toLowerCase();
+            let title = 'Сайт';
+            let body = '<h1>Привет, SWILL!</h1><p>Сайт создан по описанию.</p>';
+
+            if (lower.includes('кофейня') || lower.includes('кафе')) {
+                title = 'Кофейня';
+                body = `<h1>☕ Добро пожаловать в кофейню</h1><p>Лучший кофе в городе.</p><button>Заказать</button>`;
+            } else if (lower.includes('портфолио')) {
+                title = 'Портфолио';
+                body = `<h1>Моё портфолио</h1><p>Проекты, работы, контакты.</p>`;
+            } else if (lower.includes('лендинг')) {
+                title = 'Лендинг';
+                body = `<h1>🌐 Уникальное предложение</h1><p>Оставьте заявку</p><input placeholder="Email"><button>Отправить</button>`;
+            } else if (lower.includes('блог')) {
+                title = 'Блог';
+                body = `<h1>📝 Мой блог</h1><article><h2>Статья 1</h2><p>Текст статьи...</p></article>`;
+            }
+
+            return `<!DOCTYPE html>
+        <html lang="ru">
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${title}</title>
+        <style>body{font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#0d1117;color:#e6edf3;flex-direction:column;padding:20px;text-align:center;}h1{font-size:2.5rem;}button,input{padding:10px 20px;border-radius:8px;border:none;margin:6px;}</style>
+        </head>
+        <body>${body}</body>
+        </html>`;
+        }
+
+        // ============================================================
+        // 6. ПРЕДПРОСМОТР
         // ============================================================
         function showPreview(html) {
             placeholder.style.display = 'none';
             previewIframe.style.display = 'block';
             codeView.style.display = 'none';
-
             const blob = new Blob([html], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             previewIframe.src = url;
-
-            // Показываем код во вкладке "Код"
             codeView.textContent = html;
-
-            // Активируем вкладку предпросмотра
-            tabButtons.forEach(b => b.classList.remove('active'));
-            document.querySelector('.tabs button[data-tab="preview"]').classList.add('active');
+            document.querySelector('.tabs button[data-tab="preview"]')?.classList.add('active');
         }
 
         // ============================================================
-        // 6. ВКЛАДКИ (Preview / Code)
+        // 7. ВКЛАДКИ
         // ============================================================
         tabButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 tabButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-
                 const tab = btn.dataset.tab;
                 if (tab === 'preview') {
-                    previewIframe.style.display = 'block';
+                    previewIframe.style.display = currentHtml ? 'block' : 'none';
                     codeView.style.display = 'none';
                     placeholder.style.display = currentHtml ? 'none' : 'flex';
                 } else {
@@ -567,7 +482,7 @@
         });
 
         // ============================================================
-        // 7. ФАЙЛЫ И СКАЧИВАНИЕ
+        // 8. ФАЙЛЫ
         // ============================================================
         function updateFileBar() {
             if (currentFiles.length === 0) {
@@ -575,9 +490,8 @@
                 downloadAllBtn.style.display = 'none';
                 return;
             }
-
             let html = '';
-            currentFiles.forEach((f, i) => {
+            currentFiles.forEach(f => {
                 const blob = new Blob([f.content], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 html += `<span class="file-tag">📄 ${f.name} <a href="${url}" download="${f.name}">⬇</a></span>`;
@@ -600,37 +514,27 @@
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
-                URL.revokeObjectURL(url);
             } catch (e) {
                 alert('Ошибка ZIP: ' + e.message);
             }
         });
 
         // ============================================================
-        // 8. ДОБАВЛЕНИЕ СООБЩЕНИЙ
+        // 9. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
         // ============================================================
         function addMessage(role, content) {
             const div = document.createElement('div');
             div.className = `message ${role}`;
-
             const avatar = document.createElement('div');
             avatar.className = 'avatar';
             avatar.textContent = role === 'user' ? '👤' : '🤖';
-
             const bubble = document.createElement('div');
             bubble.className = 'bubble';
-
-            // Простой маркдаун
             let html = content;
-            html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
-                return `<pre><code>${escapeHtml(code.trim())}</code></pre>`;
-            });
+            html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => `<pre><code>${escapeHtml(code.trim())}</code></pre>`);
             html = html.replace(/`([^`]+)`/g, (_, code) => `<code>${escapeHtml(code)}</code>`);
             html = html.replace(/\n/g, '<br>');
-            // Ссылки
-            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
             bubble.innerHTML = html;
-
             div.appendChild(avatar);
             div.appendChild(bubble);
             messagesDiv.appendChild(div);
@@ -645,22 +549,19 @@
         }
 
         // ============================================================
-        // 9. ОБРАБОТЧИКИ
+        // 10. ОБРАБОТЧИКИ
         // ============================================================
         sendBtn.addEventListener('click', sendMessage);
-
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
         });
-
         userInput.addEventListener('input', () => {
             userInput.style.height = 'auto';
-            userInput.style.height = Math.min(userInput.scrollHeight, 160) + 'px';
+            userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
         });
-
         userInput.focus();
     </script>
 </body>
